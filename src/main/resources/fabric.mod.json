@@ -1,31 +1,25 @@
 {
   "schemaVersion": 1,
-  "id": "addon-template",
-  "version": "${version}",
-  "name": "Addon Template",
-  "description": "An addon template for Meteor Client addons.",
+  "id": "bypass-addon",
+  "version": "1.0.0",
+  "name": "Bypass Addon",
+  "description": "Addon that bypasses ESP restrictions and ports ModulePlugins from LiquidBounce",
   "authors": [
-    "seasnail"
+    "joealjohn"
   ],
   "contact": {
-    "repo": "https://github.com/MeteorDevelopment/meteor-addon-template"
+    "homepage": "https://github.com/joealjohn/bypass-addon"
   },
-  "icon": "assets/template/icon.png",
+  "license": "GPL-3.0",
   "environment": "client",
   "entrypoints": {
     "meteor": [
-      "com.example.addon.AddonTemplate"
+      "com.example.addon.BypassAddon"
     ]
   },
-  "mixins": [
-    "addon-template.mixins.json"
-  ],
-  "custom": {
-    "meteor-client:color": "225,25,25"
-  },
   "depends": {
-    "java": ">=21",
-    "minecraft": ["${mc_version}"],
+    "java": ">=17",
+    "minecraft": ">=1.21.4",
     "meteor-client": "*"
   }
 }
