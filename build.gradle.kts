@@ -1,5 +1,5 @@
 plugins {
-    id("fabric-loom") version "1.10-SNAPSHOT"
+    id("fabric-loom") version "1.7.4"
 }
 
 base {
@@ -9,6 +9,10 @@ base {
 }
 
 repositories {
+    maven {
+        name = "fabric"
+        url = uri("https://maven.fabricmc.net/")
+    }
     maven {
         name = "meteor-maven"
         url = uri("https://maven.meteordev.org/releases")
