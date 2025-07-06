@@ -7,9 +7,6 @@ import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.network.packet.c2s.play.PositionAndOnGroundC2SPacket;
-import net.minecraft.network.packet.c2s.play.LookAndOnGroundC2SPacket;
-import net.minecraft.network.packet.c2s.play.FullC2SPacket;
 
 public class PositionSpoofer extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -134,28 +131,35 @@ public class PositionSpoofer extends Module {
             // Create modified packet based on the original packet type
             PlayerMoveC2SPacket modifiedPacket = null;
 
-            if (packet instanceof FullC2SPacket) {
-                FullC2SPacket fullPacket = (FullC2SPacket) packet;
-                modifiedPacket = new FullC2SPacket(
-                    fullPacket.getX(0), // Keep original X
-                    spoofedY,           // Spoofed Y
-                    fullPacket.getZ(0), // Keep original Z
-                    fullPacket.getYaw(0),
-                    fullPacket.getPitch(0),
-                    spoofedOnGround,
-                    fullPacket.horizontalCollision()
+            // Get current player position for reference
+            double currentX = mc.player.getX();
+            double currentZ = mc.player.getZ();
+            float currentYaw = mc.player.getYaw();
+            float currentPitch = mc.player.getPitch();
+
+            if (packet instanceof PlayerMoveC2SPacket.Full) {
+                // For full packets, create new packet with spoofed Y but keep other current values
+                modifiedPacket = new PlayerMoveC2SPacket.Full(
+                    currentX,      // Use current X
+                    spoofedY,      // Spoofed Y
+                    currentZ,      // Use current Z
+                    currentYaw,    // Use current Yaw
+                    currentPitch,  // Use current Pitch
+                    spoofedOnGround
                 );
-            } else if (packet instanceof PositionAndOnGroundC2SPacket) {
-                PositionAndOnGroundC2SPacket posPacket = (PositionAndOnGroundC2SPacket) packet;
-                modifiedPacket = new PositionAndOnGroundC2SPacket(
-                    posPacket.getX(0), // Keep original X
-                    spoofedY,          // Spoofed Y
-                    posPacket.getZ(0), // Keep original Z
-                    spoofedOnGround,
-                    posPacket.horizontalCollision()
+            } else if (packet instanceof PlayerMoveC2SPacket.PositionAndOnGround) {
+                // For position packets, create new packet with spoofed Y
+                modifiedPacket = new PlayerMoveC2SPacket.PositionAndOnGround(
+                    currentX,      // Use current X
+                    spoofedY,      // Spoofed Y
+                    currentZ,      // Use current Z
+                    spoofedOnGround
                 );
-            } else if (packet instanceof LookAndOnGroundC2SPacket) {
+            } else if (packet instanceof PlayerMoveC2SPacket.LookAndOnGround) {
                 // Don't modify look-only packets
+                return;
+            } else if (packet instanceof PlayerMoveC2SPacket.OnGroundOnly) {
+                // Don't modify onGround-only packets
                 return;
             }
 
