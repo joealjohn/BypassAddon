@@ -1,7 +1,6 @@
 package com.example.addon;
 
-import com.example.addon.modules.ServerBypassESP;
-import com.example.addon.modules.ModulePlugins;
+import com.example.addon.modules.*;
 import com.mojang.logging.LogUtils;
 import meteordevelopment.meteorclient.addons.GithubRepo;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
@@ -17,11 +16,23 @@ public class BypassAddon extends MeteorAddon {
 
     @Override
     public void onInitialize() {
-        LOG.info("Initializing Bypass Addon");
+        LOG.info("Initializing Comprehensive Bypass Addon");
 
-        // Modules
+        // Core ESP and bypass modules
         Modules.get().add(new ServerBypassESP());
+        Modules.get().add(new EnhancedStorageESP());
+        
+        // New comprehensive bypass modules
+        Modules.get().add(new PositionSpoofer());
+        Modules.get().add(new FreecamBypass());
+        Modules.get().add(new ESPRenderer());
+        Modules.get().add(new ChunkSniffer());
+        Modules.get().add(new BypassController());
+        
+        // Utility modules
         Modules.get().add(new ModulePlugins());
+        
+        LOG.info("Loaded {} bypass modules with anti-cheat evasion capabilities", 7);
     }
 
     @Override
