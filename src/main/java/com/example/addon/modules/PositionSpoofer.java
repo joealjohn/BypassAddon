@@ -7,9 +7,6 @@ import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.network.packet.c2s.play.PositionAndOnGroundC2SPacket;
-import net.minecraft.network.packet.c2s.play.LookAndOnGroundC2SPacket;
-import net.minecraft.network.packet.c2s.play.FullC2SPacket;
 
 public class PositionSpoofer extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -134,28 +131,29 @@ public class PositionSpoofer extends Module {
             // Create modified packet based on the original packet type
             PlayerMoveC2SPacket modifiedPacket = null;
 
-            if (packet instanceof FullC2SPacket) {
-                FullC2SPacket fullPacket = (FullC2SPacket) packet;
-                modifiedPacket = new FullC2SPacket(
-                    fullPacket.getX(0), // Keep original X
-                    spoofedY,           // Spoofed Y
-                    fullPacket.getZ(0), // Keep original Z
-                    fullPacket.getYaw(0),
-                    fullPacket.getPitch(0),
-                    spoofedOnGround,
-                    fullPacket.horizontalCollision()
-                );
-            } else if (packet instanceof PositionAndOnGroundC2SPacket) {
-                PositionAndOnGroundC2SPacket posPacket = (PositionAndOnGroundC2SPacket) packet;
-                modifiedPacket = new PositionAndOnGroundC2SPacket(
-                    posPacket.getX(0), // Keep original X
+            if (packet instanceof PlayerMoveC2SPacket.Full) {
+                PlayerMoveC2SPacket.Full fullPacket = (PlayerMoveC2SPacket.Full) packet;
+                modifiedPacket = new PlayerMoveC2SPacket.Full(
+                    fullPacket.getX(), // Keep original X
                     spoofedY,          // Spoofed Y
-                    posPacket.getZ(0), // Keep original Z
-                    spoofedOnGround,
-                    posPacket.horizontalCollision()
+                    fullPacket.getZ(), // Keep original Z
+                    fullPacket.getYaw(),
+                    fullPacket.getPitch(),
+                    spoofedOnGround
                 );
-            } else if (packet instanceof LookAndOnGroundC2SPacket) {
+            } else if (packet instanceof PlayerMoveC2SPacket.PositionAndOnGround) {
+                PlayerMoveC2SPacket.PositionAndOnGround posPacket = (PlayerMoveC2SPacket.PositionAndOnGround) packet;
+                modifiedPacket = new PlayerMoveC2SPacket.PositionAndOnGround(
+                    posPacket.getX(), // Keep original X
+                    spoofedY,         // Spoofed Y
+                    posPacket.getZ(), // Keep original Z
+                    spoofedOnGround
+                );
+            } else if (packet instanceof PlayerMoveC2SPacket.LookAndOnGround) {
                 // Don't modify look-only packets
+                return;
+            } else if (packet instanceof PlayerMoveC2SPacket.OnGroundOnly) {
+                // Don't modify onGround-only packets
                 return;
             }
 
