@@ -131,22 +131,28 @@ public class PositionSpoofer extends Module {
             // Create modified packet based on the original packet type
             PlayerMoveC2SPacket modifiedPacket = null;
 
+            // Get current player position for reference
+            double currentX = mc.player.getX();
+            double currentZ = mc.player.getZ();
+            float currentYaw = mc.player.getYaw();
+            float currentPitch = mc.player.getPitch();
+
             if (packet instanceof PlayerMoveC2SPacket.Full) {
-                PlayerMoveC2SPacket.Full fullPacket = (PlayerMoveC2SPacket.Full) packet;
+                // For full packets, create new packet with spoofed Y but keep other current values
                 modifiedPacket = new PlayerMoveC2SPacket.Full(
-                    fullPacket.getX(), // Keep original X
-                    spoofedY,          // Spoofed Y
-                    fullPacket.getZ(), // Keep original Z
-                    fullPacket.getYaw(),
-                    fullPacket.getPitch(),
+                    currentX,      // Use current X
+                    spoofedY,      // Spoofed Y
+                    currentZ,      // Use current Z
+                    currentYaw,    // Use current Yaw
+                    currentPitch,  // Use current Pitch
                     spoofedOnGround
                 );
             } else if (packet instanceof PlayerMoveC2SPacket.PositionAndOnGround) {
-                PlayerMoveC2SPacket.PositionAndOnGround posPacket = (PlayerMoveC2SPacket.PositionAndOnGround) packet;
+                // For position packets, create new packet with spoofed Y
                 modifiedPacket = new PlayerMoveC2SPacket.PositionAndOnGround(
-                    posPacket.getX(), // Keep original X
-                    spoofedY,         // Spoofed Y
-                    posPacket.getZ(), // Keep original Z
+                    currentX,      // Use current X
+                    spoofedY,      // Spoofed Y
+                    currentZ,      // Use current Z
                     spoofedOnGround
                 );
             } else if (packet instanceof PlayerMoveC2SPacket.LookAndOnGround) {
